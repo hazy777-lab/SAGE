@@ -1518,4 +1518,3 @@ export default function SAGE() {
   if (screen==="chat"&&demo) return <Chat lang={lang} demographics={demo} locations={locations}/>;
   return null;
 }
-}
