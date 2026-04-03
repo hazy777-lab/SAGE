@@ -23,12 +23,28 @@ export default async function handler(req) {
 
   try {
     const body = await req.json();
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+
+    // Debug: check if key exists and its format
+    if (!apiKey) {
+      return new Response(JSON.stringify({ error: 'API key not configured' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
+
+    if (!apiKey.startsWith('sk-ant-')) {
+      return new Response(JSON.stringify({ error: 'API key format invalid: ' + apiKey.slice(0, 10) + '...' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify(body),
@@ -36,6 +52,7 @@ export default async function handler(req) {
 
     const data = await response.json();
 
+    // Pass through full response including error details
     return new Response(JSON.stringify(data), {
       status: response.status,
       headers: {
