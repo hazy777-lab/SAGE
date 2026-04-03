@@ -1614,7 +1614,10 @@ Symptom location(s): ${locStr}`;
     })
     .then(async r => {
       clearTimeout(timeoutId);
-      if (r.status === 401 || r.status === 403) throw new Error("Not authorised — please log in to claude.ai");
+      if (r.status === 401 || r.status === 403) {
+        const errBody = await r.text();
+        throw new Error("Auth failed (" + r.status + "): " + errBody.slice(0, 150));
+      }
       // Read the complete response body
       const txt = await r.text();
       if (!txt || txt.trim() === "") {
