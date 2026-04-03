@@ -1603,7 +1603,6 @@ Symptom location(s): ${locStr}`;
       signal: controller.signal,
       headers: {
         "Content-Type": "application/json",
-       "const ANTHROPIC_API_URL = "/api/chat";"
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
